@@ -9,13 +9,52 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
-  Color gradientStart = Colors.redAccent; //Change start gradient color here
-  Color gradientEnd = Colors.orangeAccent;
+//<TickerProviderStateMixin> says that this class can be used as the ticker
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with TickerProviderStateMixin {
+  AnimationController backgroundController;
+  AnimationController logoController;
+  Animation logoAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    backgroundController = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+    backgroundController.forward(); //Proceeds animation forward
+    backgroundController.addListener(() {
+      setState(() {});
+    });
+
+    logoController = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+    logoController.forward(); //Proceeds animation forward
+    logoController.addListener(() {
+      setState(() {});
+    });
+
+    logoAnimation = CurvedAnimation(
+      parent: logoController,
+      curve: Curves.bounceInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    logoController.dispose();
+    backgroundController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade700,
+      backgroundColor:
+          Colors.grey.shade700.withOpacity(backgroundController.value),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -27,7 +66,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 Hero(
                   child: Container(
                     child: Image.asset('images/logo.png'),
-                    height: 60.0,
+                    height: logoAnimation.value * 70.0,
                   ),
                   tag: 'logo',
                 ),
