@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "39538982560",
+    "firebase_url": "https://flutter-apps-b7eca.firebaseio.com",
+    "project_id": "flutter-apps-b7eca",
+    "storage_bucket": "flutter-apps-b7eca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39538982560:android:4095e5d907775aaed493c5",
+        "android_client_info": {
+          "package_name": "abhishekdoshi.netlify.flashchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "39538982560-864qg4und71iiv4cfsgk6nb2eiu2kno1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARl7rP_XO9CvhkJL02Nv55PeQjvNKS38g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "39538982560-864qg4und71iiv4cfsgk6nb2eiu2kno1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
