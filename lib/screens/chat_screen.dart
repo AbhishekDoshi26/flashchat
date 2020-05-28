@@ -1,6 +1,8 @@
+import 'package:flashchat/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flashchat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChatScreen extends StatefulWidget {
   static String id = 'Chat Screen';
@@ -39,7 +41,17 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Colors.black,
               onPressed: () {
                 _auth.signOut();
-                Navigator.pop(context);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, WelcomeScreen.id, (_) => false);
+                Fluttertoast.showToast(
+                  msg: "Thank You for using Flash Chat 😃",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.tealAccent.shade400,
+                  textColor: Colors.black,
+                  fontSize: 16.0,
+                );
               }),
         ],
         title: Text(
