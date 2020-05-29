@@ -5,8 +5,10 @@ import 'package:flashchat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 final _firestore = Firestore.instance;
+FirebaseUser loggedInUser;
 
 class ChatScreen extends StatefulWidget {
   static String id = 'Chat Screen';
@@ -17,7 +19,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _auth = FirebaseAuth.instance;
   final messageTextController = TextEditingController();
-  FirebaseUser loggedInUser;
+
   String messageText;
 
   void getCurrentUser() async {
@@ -100,9 +102,17 @@ class _ChatScreenState extends State<ChatScreen> {
                         highlightColor: Colors.transparent,
                         onPressed: () {
                           messageTextController.clear();
+                          var now = DateTime.now();
+                          String date =
+                              '${now.day.toString()}/${now.month.toString()}';
+                          String time =
+                              '${DateFormat.jm().format(now).toString()}';
                           _firestore.collection('messages').add({
                             'text': messageText,
                             'sender': loggedInUser.email,
+                            'date': date,
+                            'time': time,
+                            'Timestamp': now,
                           });
                         },
                         icon: Icon(Icons.send),
@@ -128,20 +138,29 @@ class MessageStream extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data.documents.isEmpty) {
           return Align(
             alignment: Alignment.bottomCenter,
-            child: CircularProgressIndicator(),
+            child: Text('No messages here!!'),
           );
         }
-        final messages = snapshot.data.documents;
+        final messages = snapshot.data.documents.reversed;
         List<MessageBubble> messageBubbles = [];
         for (var message in messages) {
           final messageText = message.data['text'];
           final messageSender = message.data['sender'];
-          final messageBubble =
-              MessageBubble(sender: messageSender, text: messageText);
+          final date = message.data['date'];
+          final time = message.data['time'];
+          final currentUser = loggedInUser.email;
+          final messageBubble = MessageBubble(
+            sender: messageSender,
+            text: messageText,
+            align: currentUser == messageSender,
+            date: date,
+            time: time,
+          );
           messageBubbles.add(messageBubble);
         }
         return Expanded(
           child: ListView(
+            reverse: true,
             padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
             children: messageBubbles,
           ),
@@ -154,30 +173,57 @@ class MessageStream extends StatelessWidget {
 class MessageBubble extends StatelessWidget {
   final String text;
   final String sender;
+  final bool align;
+  final String date;
+  final String time;
 
-  MessageBubble({this.sender, this.text});
+  MessageBubble({this.sender, this.text, this.align, this.date, this.time});
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            align ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             sender,
             style: TextStyle(fontSize: 12, color: Colors.white30),
           ),
+          Text(
+            date,
+            style: TextStyle(fontSize: 12, color: Colors.white30),
+          ),
           Material(
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: align
+                ? BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  )
+                : BorderRadius.only(
+                    topRight: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  ),
             elevation: 5,
-            color: Colors.lightBlueAccent.shade700,
+            color: align
+                ? Colors.lightBlueAccent.shade700
+                : Colors.tealAccent.shade700,
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
                 text,
-                style: TextStyle(fontSize: 15.0),
+                style: TextStyle(
+                  fontSize: 17.0,
+                  color: align ? Colors.white : Colors.black,
+                ),
               ),
             ),
+          ),
+          Text(
+            '$time',
+            style: TextStyle(fontSize: 12, color: Colors.white30),
           ),
         ],
       ),

@@ -23,96 +23,96 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Hero(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Flexible(
+                  child: Hero(
                     child: Container(
                       height: 200.0,
                       child: Image.asset('images/logo.png'),
                     ),
                     tag: 'logo',
                   ),
-                  SizedBox(
-                    height: 48.0,
-                  ),
-                  TextField(
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (value) {
-                      email = value;
-                    },
-                    decoration: kTextFieldDecoration.copyWith(
-                      hintText: 'Enter your email',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.yellowAccent.shade700, width: 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.yellowAccent.shade700, width: 2.0),
-                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                      ),
+                ),
+                SizedBox(
+                  height: 48.0,
+                ),
+                TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged: (value) {
+                    email = value;
+                  },
+                  decoration: kTextFieldDecoration.copyWith(
+                    hintText: 'Enter your email',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.yellowAccent.shade700, width: 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.yellowAccent.shade700, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  TextField(
-                    obscureText: true,
-                    textAlign: TextAlign.center,
-                    onChanged: (value) {
-                      password = value;
-                    },
-                    decoration: kTextFieldDecoration.copyWith(
-                      hintText: 'Enter your password',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.yellowAccent.shade700, width: 1.0),
-                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.yellowAccent.shade700, width: 2.0),
-                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
-                      ),
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+                TextField(
+                  obscureText: true,
+                  textAlign: TextAlign.center,
+                  onChanged: (value) {
+                    password = value;
+                  },
+                  decoration: kTextFieldDecoration.copyWith(
+                    hintText: 'Enter your password',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.yellowAccent.shade700, width: 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.yellowAccent.shade700, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(32.0)),
                     ),
                   ),
-                  SizedBox(
-                    height: 24.0,
-                  ),
-                  Button(
-                    color: Colors.yellowAccent.shade700,
-                    title: 'Register',
-                    onPressed: () async {
+                ),
+                SizedBox(
+                  height: 24.0,
+                ),
+                Button(
+                  color: Colors.yellowAccent.shade700,
+                  title: 'Register',
+                  onPressed: () async {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    try {
+                      final newUser =
+                          await _auth.createUserWithEmailAndPassword(
+                              email: email, password: password);
+                      if (newUser != null)
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, ChatScreen.id, (_) => false);
                       setState(() {
-                        showSpinner = true;
+                        showSpinner = false;
                       });
-                      try {
-                        final newUser =
-                            await _auth.createUserWithEmailAndPassword(
-                                email: email, password: password);
-                        if (newUser != null)
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, ChatScreen.id, (_) => false);
-                        setState(() {
-                          showSpinner = false;
-                        });
-                      } catch (e) {
-                        setState(() {
-                          showSpinner = false;
-                          showAlertDialog(context, e.toString(), 'Sorry!');
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
+                    } catch (e) {
+                      setState(() {
+                        showSpinner = false;
+                        showAlertDialog(context, e.toString(), 'Sorry!');
+                      });
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ),
