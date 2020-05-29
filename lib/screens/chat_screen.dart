@@ -83,7 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: <Widget>[
                     Expanded(
                       child: TextField(
-                        textCapitalization: TextCapitalization.words,
+                        textCapitalization: TextCapitalization.sentences,
                         controller: messageTextController,
                         onChanged: (value) {
                           messageText = messageTextController.text;
@@ -112,7 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             'sender': loggedInUser.email,
                             'date': date,
                             'time': time,
-                            'Timestamp': now,
+                            'Timestamp': FieldValue.serverTimestamp(),
                           });
                         },
                         icon: Icon(Icons.send),
@@ -133,7 +133,8 @@ class MessageStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('messages').snapshots(),
+      stream:
+          _firestore.collection('messages').orderBy('Timestamp').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data.documents.isEmpty) {
           return Align(
